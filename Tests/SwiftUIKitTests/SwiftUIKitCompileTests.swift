@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftUIKit
+@testable import SwiftUIKit
 import XCTest
 
 final class SwiftUIKitCompileTests: XCTestCase {
@@ -29,9 +29,8 @@ final class SwiftUIKitCompileTests: XCTestCase {
 
         _ = Text("Hello")
             .surface(
-                .ultraThickMaterial,
+                .ultraThickMaterial.opacity(0.8),
                 in: .roundedRect(cornerRadius: 13),
-                opacity: 0.8,
                 shadow: .drop(radius: 8),
                 ignoresSafeAreaEdges: .all
             )
@@ -102,6 +101,64 @@ final class SwiftUIKitCompileTests: XCTestCase {
             )
             .onFirstAppear {
                 _ = "loaded"
+            }
+    }
+
+    func testTaskSleepDurationCompatCompiles() async throws {
+        let duration: TaskSleepDuration = .nanoseconds(1)
+        let tolerance: TaskSleepDuration = .nanoseconds(0)
+
+        try await Task.sleep(
+            for: duration,
+            tolerance: tolerance
+        )
+    }
+
+    func testTaskSleepDurationScalesToNanoseconds() {
+        XCTAssertEqual(
+            TaskSleepDuration.nanoseconds(7).nanoseconds,
+            7
+        )
+        XCTAssertEqual(
+            TaskSleepDuration.microseconds(7).nanoseconds,
+            7_000
+        )
+        XCTAssertEqual(
+            TaskSleepDuration.milliseconds(7).nanoseconds,
+            7_000_000
+        )
+        XCTAssertEqual(
+            TaskSleepDuration.seconds(7).nanoseconds,
+            7_000_000_000
+        )
+    }
+
+    func testVersionedModifiersCompile() {
+        @State var scrollID: Int?
+        @State var changeCount = 0
+
+        _ = Text("Glass")
+            .glassEffectIfAvailable()
+            .backgroundExtensionEffectIfAvailable()
+
+        _ = ScrollView {
+            Text("Row")
+                .containerRelativeFrameIfAvailable(.horizontal)
+        }
+        .scrollBounceBehaviorIfAvailable(.basedOnSize)
+        .scrollClipDisabledIfAvailable()
+        .scrollIndicatorsFlashIfAvailable(trigger: changeCount)
+        .contentMarginsIfAvailable(.horizontal, 12)
+        .scrollPositionIfAvailable(id: $scrollID)
+
+        _ = Text("Sheet")
+            .presentationCornerRadiusIfAvailable(24)
+            .onChangeCompat(
+                of: changeCount,
+                initial: true
+            ) { oldValue, newValue in
+                _ = oldValue
+                _ = newValue
             }
     }
 }

@@ -4,7 +4,7 @@ import SwiftUI
 ///
 /// SwiftUI's native `shadow` modifier is already flexible, but it becomes
 /// noisy when the surface itself is trying to express the usual card-like
-/// background: fill, opacity, outline, and shadow. `SurfaceShadow` keeps the
+/// background: fill, outline, and shadow. `SurfaceShadow` keeps the
 /// common drop-shadow case close to the surface declaration while still mapping
 /// directly to SwiftUI's own shadow rendering.
 ///
@@ -55,7 +55,7 @@ public extension View {
     /// later SwiftUIKit modifiers.
     ///
     /// Native SwiftUI can express the same visual result with `background`,
-    /// `RoundedRectangle`, `fill`, `opacity`, `shadow`, and sometimes
+    /// `RoundedRectangle`, `fill`, `shadow`, and sometimes
     /// `ignoresSafeArea`. The result is powerful but verbose, and the same shape
     /// often has to be repeated again for a border overlay. `surface` keeps the
     /// common case close to the view it styles and makes the selected shape
@@ -64,7 +64,7 @@ public extension View {
     /// Use this overload when a single `ShapeStyle` describes the surface: a
     /// color, semantic style such as `.primary`, material, or gradient. Use the
     /// builder overload when the background needs custom composition beyond
-    /// opacity, shadow, and safe-area behavior.
+    /// shadow and safe-area behavior.
     ///
     /// ```swift
     /// Text("Save")
@@ -75,9 +75,8 @@ public extension View {
     /// Text("Panel")
     ///     .padding()
     ///     .surface(
-    ///         .ultraThickMaterial,
+    ///         .ultraThickMaterial.opacity(0.86),
     ///         in: .roundedRect(cornerRadius: 16),
-    ///         opacity: 0.86,
     ///         shadow: .drop(radius: 10, y: 3)
     ///     )
     ///     .stroke(.primary.opacity(0.1))
@@ -88,7 +87,6 @@ public extension View {
     ///   - shape: The shape used for the surface and inherited by later
     ///     SwiftUIKit stroke modifiers.
     ///   - fillStyle: The SwiftUI fill rule.
-    ///   - opacity: The opacity applied to the filled surface.
     ///   - shadow: An optional drop shadow applied to the filled surface.
     ///   - edges: The safe-area edges ignored by the background content.
     /// - Returns: A view with a shaped background surface.
@@ -96,7 +94,6 @@ public extension View {
         _ style: Style,
         in shape: SurfaceShape = .rect,
         fillStyle: FillStyle = FillStyle(),
-        opacity: Double = 1,
         shadow: SurfaceShadow? = nil,
         ignoresSafeAreaEdges edges: Edge.Set = Edge.Set()
     ) -> some View {
@@ -106,7 +103,6 @@ public extension View {
                     style,
                     style: fillStyle
                 )
-                .opacity(opacity)
                 .surfaceShadow(shadow)
                 .ignoresSafeArea(edges: edges)
         }

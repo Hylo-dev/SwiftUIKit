@@ -58,9 +58,8 @@ Text("Hello")
 Text("Drop files here")
     .padding()
     .surface(
-        .ultraThickMaterial,
+        .ultraThickMaterial.opacity(0.8),
         in: .roundedRect(cornerRadius: 13),
-        opacity: 0.8,
         shadow: .drop(radius: 8),
         ignoresSafeAreaEdges: .all
     )
@@ -160,5 +159,54 @@ Text("Optional detail")
 ContentView()
     .onFirstAppear {
         loadInitialData()
+    }
+```
+
+## Task Sleep
+
+`Task.sleep(for:tolerance:)` accepts a SwiftUIKit duration value so projects can
+use readable `.seconds`, `.milliseconds`, `.microseconds`, and `.nanoseconds`
+call sites while still supporting older deployment targets.
+
+```swift
+try await Task.sleep(for: .milliseconds(300))
+```
+
+```swift
+try await Task.sleep(
+    for: .seconds(1),
+    tolerance: .milliseconds(100)
+)
+```
+
+## Versioned Modifiers
+
+Versioned modifiers call newer SwiftUI APIs only when the runtime supports them
+and otherwise leave the view unchanged.
+
+```swift
+Text("Glass")
+    .glassEffectIfAvailable()
+    .backgroundExtensionEffectIfAvailable()
+```
+
+```swift
+ScrollView {
+    Text("Row")
+        .containerRelativeFrameIfAvailable(.horizontal)
+}
+.scrollBounceBehaviorIfAvailable(.basedOnSize)
+.scrollClipDisabledIfAvailable()
+.contentMarginsIfAvailable(.horizontal, 12)
+```
+
+```swift
+Text("Sheet")
+    .presentationCornerRadiusIfAvailable(24)
+    .onChangeCompat(of: count, initial: true) { oldValue, newValue in
+        update(
+            from: oldValue,
+            to: newValue
+        )
     }
 ```
