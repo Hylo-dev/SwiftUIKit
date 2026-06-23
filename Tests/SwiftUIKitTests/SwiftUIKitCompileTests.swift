@@ -1,5 +1,7 @@
 import SwiftUI
 @testable import SwiftUIKit
+@testable import SwiftUIKitDemoSupport
+import UniformTypeIdentifiers
 import XCTest
 
 final class SwiftUIKitCompileTests: XCTestCase {
@@ -90,6 +92,53 @@ final class SwiftUIKitCompileTests: XCTestCase {
                 _ = urls
                 _ = location
             }
+        #endif
+    }
+
+    func testFileImportModifiersCompile() {
+        #if !os(tvOS) && !os(watchOS)
+        @State var isTargeted = false
+        let mode: FileImportMode = .automatic
+
+        _ = Text("Import")
+            .onFileImport { urls in
+                _ = urls
+            }
+
+        _ = Text("Import")
+            .onFileImport(
+                mode: .pickerOnly,
+                allowedContentTypes: [
+                    .image
+                ],
+                allowsMultipleSelection: false,
+                isTargeted: $isTargeted
+            ) { urls in
+                _ = urls
+            }
+
+        _ = Text("Import")
+            .onFileImport(
+                mode: .dropOnly,
+                allowedContentTypes: [
+                    .pdf
+                ],
+                isTargeted: $isTargeted
+            ) { urls in
+                _ = urls
+            }
+
+        _ = mode
+        #endif
+    }
+
+    func testFileImportDemoViewCompiles() {
+        #if !os(tvOS) && !os(watchOS)
+        _ = SwiftUIKitDemoView()
+        _ = FileImportComparisonDemoView()
+        _ = SurfaceStrokeComparisonDemoView()
+        _ = ConditionalVisibilityComparisonDemoView()
+        _ = GeometryComparisonDemoView()
         #endif
     }
 

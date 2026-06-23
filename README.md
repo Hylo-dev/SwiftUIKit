@@ -8,6 +8,19 @@ The package keeps the API close to SwiftUI. It avoids replacing native concepts:
 colors, materials, gradients, `StrokeStyle`, `CoordinateSpace`, and SwiftUI
 shapes still do the real work.
 
+## AI Authorship
+
+SwiftUIKit is implemented 100% with Agentic Coding. The project idea, product
+direction, priorities, and final decisions are owned by the HYLO.dev GitHub
+organization.
+
+Members of HYLO.dev act as the project managers for this repository: we define
+what the package should become, review the results, and steer the work, even when
+the implementation itself is written by an LLM.
+
+If that workflow is not for you, that is fine: you can simply choose not to use
+the package.
+
 ## Platforms
 
 - iOS and iPadOS 14+
@@ -16,8 +29,8 @@ shapes still do the real work.
 - watchOS 7+
 - visionOS 1+
 
-File drop helpers are unavailable on tvOS and watchOS because SwiftUI does not
-provide the required drop APIs on those platforms.
+File import and drop helpers are unavailable on tvOS and watchOS because SwiftUI
+does not provide the required picker and drop APIs on those platforms.
 
 ## Conditional Modifiers
 
@@ -126,22 +139,46 @@ Text("Track me")
     }
 ```
 
-## File Drop
+## File Import
 
 ```swift
 DropZone()
-    .onFileDrop(isTargeted: $isTargeted) { urls in
+    .onFileImport(isTargeted: $isTargeted) { urls in
         importFiles(urls)
     }
 ```
 
 ```swift
+DropZone()
+    .onFileImport(
+        mode: .pickerOnly,
+        allowedContentTypes: [
+            .image
+        ],
+        allowsMultipleSelection: false,
+        isTargeted: $isTargeted
+    ) { urls in
+        importFiles(urls)
+    }
+```
+
+```swift
+DropZone()
+    .onFileImport(mode: .dropOnly, isTargeted: $isTargeted) { urls in
+        importFiles(urls)
+    }
+```
+
+`onFileImport` defaults to `.automatic`: clicking or tapping opens the system
+file picker, while dropping files imports them directly. Use `.pickerOnly` or
+`.dropOnly` when a view should expose only one interaction.
+
+Drop-only call sites that need the drop location can keep using `onFileDrop`:
+
+```swift
 CanvasView()
     .onFileDrop(isTargeted: $isTargeted) { urls, location in
-        importFiles(
-            urls,
-            at: location
-        )
+        importFiles(urls, at: location)
     }
 ```
 
