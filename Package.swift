@@ -17,38 +17,11 @@ let package = Package(
             targets: [
                 "SwiftUIKit"
             ]
-        ),
-        .executable(
-            name: "SwiftUIKitDemo",
-            targets: [
-                "SwiftUIKitDemo"
-            ]
         )
     ],
     targets: [
         .target(
             name: "SwiftUIKit"
-        ),
-        .target(
-            name: "SwiftUIKitDemoSupport",
-            dependencies: [
-                "SwiftUIKit"
-            ],
-            path: "Examples/SwiftUIKitDemoSupport"
-        ),
-        .executableTarget(
-            name: "SwiftUIKitDemo",
-            dependencies: [
-                "SwiftUIKitDemoSupport"
-            ],
-            path: "Examples/SwiftUIKitDemo"
-        ),
-        .testTarget(
-            name: "SwiftUIKitTests",
-            dependencies: [
-                "SwiftUIKit",
-                "SwiftUIKitDemoSupport"
-            ]
         )
     ]
 )
